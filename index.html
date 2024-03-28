@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="UW-3DGS: Unveiling Underwater Scenes and Scattering Media through 3D Gaussian Splatting">
+    <meta name="keywords" content="UW-3DGS, underwater image rendering, underwater image reconstruction, NeRF, ACM MM">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UW-3DGS: Unveiling Underwater Scenes and Scattering Media through 3D Gaussian Splatting</title>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="enable-threads.js"></script>
+    
+
+
+
+    <style>
+
+        body {
+        background-color: #CCD5DE;
+        height: 100vh;
+        margin: 0px;
+        }
+
+        a {
+        text-decoration: none;
+        color: #3333CC;
+        }
+
+        a:hover {
+        text-decoration: underline;
+        color: #1111AA;
+        }
+
+        .demo-content {
+        display: block;
+        margin: 10px;
+        }
+
+        .header-content-container {
+        background-color: #e7e9eb;
+        border-radius: 7px;
+        -moz-box-shadow: 0px 2px 10px -1px rgb(0 0 0 / 39%);
+        -webkit-box-shadow: 0px 2px 10px -1px rgb(0 0 0 / 39%);
+        box-shadow: 0px 2px 10px -1px rgb(0 0 0 / 39%);
+        max-width: 1065px;
+        min-width: 350px;
+        margin: auto;
+        font-family: "PT Sans", Arial, serif;
+        font-size: 12pt;
+        }
+
+        .title {
+        display: flex;
+        text-align: center;
+        padding: 10px;
+        -moz-box-shadow: 0 5px 10px -5px #aaa;
+        -webkit-box-shadow: 0 5px 10px -5px #aaa;
+        box-shadow: 0 5px 10px -5px #aaa;
+        margin-bottom: 15px;
+        font-family: "PT Sans", Arial, serif;
+        font-size: 15pt;
+        color: #111111;
+        }
+
+        .small-title {
+        font-family: "PT Sans", Arial, serif;
+        font-size: 12pt;
+        font-weight: bold;
+        color: #333333;
+        }
+
+        .content-row {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        text-align: center;
+        }
+
+        .demo-scene-panel {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        color: #111111;
+        border-radius: 7px;
+        border: #bbbbbb 1px solid;
+        background-color: #f1f1f1;
+        width: 220px;
+        margin-left: 8px;
+        margin-right: 8px;
+        }
+
+        .demo-scene-panel:hover {
+        color: #333333;
+        border-color: #8a9ba8;
+        background-color: #e4edfc;
+        cursor: pointer;
+        }
+
+        .demo-scene-panel-image {
+        width: 95%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        }
+
+        .button {
+        color: #3C5060;
+        border: #AEC5D7 1px solid;
+        background-color: #E5EAEE;
+        padding: 5px;
+        border-radius: 3px;
+        filter: drop-shadow(2px 2px 3px #aaaaaa);
+        }
+
+        .button:hover{
+        cursor: pointer;
+        color: #1B242B;
+        background-color: #E4EFF9;
+        border-color: #4A5A67;
+        }
+
+        .text-input {
+        border: #aaaaaa 1px solid;
+        background-color: #ffffff;
+        padding: 4px;
+        border-radius: 3px;
+        }
+
+        .splat-panel {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        color: #111111;
+        font-size: 12pt;
+        font-family: "PT Sans", Arial, serif;
+        border-radius: 7px;
+        border: #bbbbbb 1px solid;
+        background-color: #f1f1f1;
+        width: 310px;
+        height: 280px;
+        margin-left: 8px;
+        margin-right: 8px;
+        }
+
+        .loading-icon {
+            width: 35px;
+            padding: 15px;
+            background: #324d70;
+            z-index:99999;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            --_m:
+                conic-gradient(#0000,#000),
+                linear-gradient(#000 0 0) content-box;
+            -webkit-mask: var(--_m);
+                mask: var(--_m);
+            -webkit-mask-composite: source-out;
+                mask-composite: subtract;
+            box-sizing: border-box;
+            animation: ply-load 1s linear infinite;
+        }
+
+        .controls-key {
+            font-weight: bold;
+            padding: 3px;
+            border: #aaaaaa 1px solid;
+            background-color: #dddddd;
+        }
+
+        .controls-key-description {
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        .file-ext {
+            border: #bababa 1px solid;
+            border-radius: 3px;
+            background-color: #e6e6e6;
+            padding-left: 5px;
+            padding-right: 5px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            margin-left: 3px;
+            margin-right: 3px;
+        }
+
+        .file-ext-small {
+            border: #ababab 1px solid;
+            border-radius: 3px;
+            background-color: #dfdfdf;
+            padding-left: 4px;
+            padding-right: 4px;
+            padding-bottom: 1px;
+            margin-left: 3px;
+            margin-right: 3px;
+        }
+
+        @keyframes ply-load {
+            to{transform: rotate(1turn)}
+        }
+
+        @media (max-width: 740px){
+    
+            .demo-scene-panel {
+                width: 340px;
+            }
+
+            .splat-panel {
+                width: 340px;
+            }
+
+        }
+
+        @media (max-width: 370px){
+    
+            .demo-scene-panel {
+                max-width: 300px;
+            }
+
+            .splat-panel {
+                max-width: 300px;
+            }
+
+            .header-content-container {
+            min-width: 330px;
+            }
+
+        }
+
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./lib/three.module.js",
+                "gaussian-splats-3d": "./lib/gaussian-splats-3d.module.js"
+            }
+        }
+    </script>
+    <script>
+        let currentAlphaRemovalThreshold;
+        let currentCameraUpArray;
+        let currentCameraPositionArray;
+        let currentCameraLookAtArray;
+    </script>
+
+
+
+    <script type="module">
+        import * as GaussianSplats3D from 'gaussian-splats-3d';
+
+        function convertPLYToSplatBuffer(plyBuffer, compressionLevel, alphaRemovalThreshold) {
+        const plyParser = new GaussianSplats3D.PlyParser(plyBuffer);
+        return plyParser.parseToSplatBuffer(compressionLevel, alphaRemovalThreshold);
+        }
+
+        function convertStandardSplatToSplatBuffer(bufferData, compressionLevel, alphaRemovalThreshold){
+        const splatArray = GaussianSplats3D.SplatLoader.parseStandardSplatToUncompressedSplatArray(bufferData);
+        const splatCompressor = new GaussianSplats3D.SplatCompressor(compressionLevel, alphaRemovalThreshold);
+        return splatCompressor.uncompressedSplatArrayToSplatBuffer(splatArray);
+        }
+
+        function isPlyFile(fileName) {
+        return fileName.toLowerCase().trim().endsWith('.ply');
+        }
+
+        function fileBufferToSplatBuffer(fileBufferData, isPly, isStandardSplat, compressionLevel, alphaRemovalThreshold) {
+        let splatBuffer;
+        if (isPly) {
+            splatBuffer = convertPLYToSplatBuffer(fileBufferData, compressionLevel, alphaRemovalThreshold);
+        } else {
+            if (isStandardSplat) {
+            splatBuffer = convertStandardSplatToSplatBuffer(fileBufferData, compressionLevel, alphaRemovalThreshold);
+            } else {
+            splatBuffer = new GaussianSplats3D.SplatBuffer(fileBufferData);
+            }
+        }
+        return splatBuffer;
+        }
+
+        window.onFileChange = function(arg, fileNameLabelID) {
+        const fileNameLabel = document.getElementById(fileNameLabelID);
+        const url = arg.value;
+        let lastForwardSlash = url.lastIndexOf('/');
+        let lastBackwardSlash = url.lastIndexOf('\\');
+        const lastSlash = Math.max(lastForwardSlash, lastBackwardSlash);
+        fileNameLabel.innerHTML = url.substring(lastSlash + 1);
+        }
+
+        let conversionInProgress = false;
+        window.convertPlyFile = function() {
+        if (conversionInProgress) return;
+        const conversionFile = document.getElementById("conversionFile");
+        const compressionLevel = parseInt(document.getElementById("compressionLevel").value);
+        const alphaRemovalThreshold = parseInt(document.getElementById("alphaRemovalThreshold").value);
+
+        if (isNaN(compressionLevel) || compressionLevel < 0 || compressionLevel > 1) {
+            setConversionError("Invalid compression level.");
+            return;
+        } else if (isNaN(alphaRemovalThreshold) || alphaRemovalThreshold <0 || alphaRemovalThreshold > 255) {
+            setConversionError("Invalid alpha remval threshold.");
+            return;
+        } else if (!conversionFile.files[0]) {
+            setConversionError("Please choose a file to convert.");
+            return;
+        }
+
+        setConversionError("");
+        const convertButton = document.getElementById("convertButton");
+
+        const conversionDone = (error) => {
+            if (error) {
+            console.error(error);
+            setConversionError("Could not convert file.");
+            } else {
+            setConversionStatus("Conversion complete!");
+            setConversionLoadingIconVisibility(false);
+            setConversionCheckIconVisibility(true);
+            }
+            convertButton.disabled = false;
+            conversionInProgress = false;
+        }
+
+        try {
+            const fileReader = new FileReader();
+            fileReader.onload = function(){
+            convertButton.disabled = true;
+            setConversionStatus("Parsing file...");
+            setConversionLoadingIconVisibility(true);
+            setConversionCheckIconVisibility(false);
+            const conversionFileName = conversionFile.files[0].name;
+            const isPly = isPlyFile(conversionFileName);
+            const isStandardSplat = GaussianSplats3D.SplatLoader.isStandardSplatFormat(conversionFileName);
+            window.setTimeout(() => {
+                try {
+                const splatBuffer = fileBufferToSplatBuffer(fileReader.result, isPly, isStandardSplat, compressionLevel, alphaRemovalThreshold);
+                new GaussianSplats3D.SplatLoader(splatBuffer).downloadFile('converted_file.ksplat');
+                conversionDone();
+                } catch (e) {
+                conversionDone(e);
+                }
+            }, 100);
+            }
+            conversionInProgress = true;
+            setConversionStatus("Loading .PLY...");
+            setConversionLoadingIconVisibility(true);
+            fileReader.readAsArrayBuffer(conversionFile.files[0]);
+        } catch (e) {
+            conversionDone(e);
+        }
+        }
+
+        function setConversionError(msg) {
+        setConversionLoadingIconVisibility(false);
+        setConversionCheckIconVisibility(false);
+        document.getElementById("conversionStatus").innerHTML = "";
+        document.getElementById("conversionError").innerHTML = msg;
+        }
+
+        function setConversionStatus(msg) {
+        document.getElementById("conversionError").innerHTML = "";
+        document.getElementById("conversionStatus").innerHTML = msg;
+        }
+
+        function setConversionLoadingIconVisibility(visible) {
+        document.getElementById('conversion-loading-icon').style.display = visible ? 'block' : 'none';
+        }
+
+        function setConversionCheckIconVisibility(visible) {
+        document.getElementById('check-icon').style.display = visible ? 'block' : 'none';
+        }
+
+        window.viewSplat = function() {
+
+        const viewFile = document.getElementById("viewFile");
+        const alphaRemovalThreshold = parseInt(document.getElementById("alphaRemovalThresholdView").value);
+
+        let cameraUpArray = document.getElementById("cameraUp").value;
+        let cameraPositionArray = document.getElementById("cameraPosition").value;
+        let cameraLookAtArray = document.getElementById("cameraLookAt").value;
+
+        cameraUpArray = cameraUpArray.split(',');
+        cameraPositionArray = cameraPositionArray.split(',');
+        cameraLookAtArray = cameraLookAtArray.split(',');
+
+        if (!viewFile.files[0]) {
+            setViewError("Please choose a file to view.");
+            return;
+        } else if (isNaN(alphaRemovalThreshold) || alphaRemovalThreshold < 0 || alphaRemovalThreshold > 255) {
+            setViewError("Invalid alpha remval threshold.");
+            return;
+        }
+
+        if (cameraUpArray.length !== 3) {
+            setViewError("Camera up must contain 3 elements.");
+            return;
+        }
+
+        if (cameraPositionArray.length !== 3) {
+            setViewError("Camera position must contain 3 elements.");
+            return;
+        }
+
+        if (cameraLookAtArray.length !== 3) {
+            setViewError("Camera look-at must contain 3 elements.");
+            return;
+        }
+
+        for (let i = 0; i < 3; i++) {
+            cameraUpArray[i] = parseFloat(cameraUpArray[i]);
+            cameraPositionArray[i] = parseFloat(cameraPositionArray[i]);
+            cameraLookAtArray[i] = parseFloat(cameraLookAtArray[i]);
+
+            if (isNaN(cameraUpArray[i])) {
+            setViewError("Invalid camera up.");
+            return;
+            }
+
+            if (isNaN(cameraPositionArray[i])) {
+            setViewError("Invalid camera position.");
+            return;
+            }
+
+            if (isNaN(cameraLookAtArray[i])) {
+            setViewError("Invalid camera look-at.");
+            return;
+            }
+        }
+
+        const viewFileName = viewFile.files[0].name;
+        const isPly = isPlyFile(viewFileName);
+        const isStandardSplat = GaussianSplats3D.SplatLoader.isStandardSplatFormat(viewFileName);
+
+        currentAlphaRemovalThreshold = alphaRemovalThreshold;
+        currentCameraUpArray = cameraUpArray;
+        currentCameraPositionArray = cameraPositionArray;
+        currentCameraLookAtArray = cameraLookAtArray;
+        try {
+            const fileReader = new FileReader();
+            fileReader.onload = function(){
+            try {
+            runViewer(fileReader.result, isPly, isStandardSplat, alphaRemovalThreshold, cameraUpArray, cameraPositionArray, cameraLookAtArray);
+            } catch (e) {
+                setViewError("Could not view scene.");
+            }
+            }
+            setViewStatus("Loading scene...");
+            fileReader.readAsArrayBuffer(viewFile.files[0]);
+        } catch (e) {
+            console.error(e);
+            setViewError("Could not view scene.");
+        }
+        }
+
+        function setViewError(msg) {
+        setViewLoadingIconVisibility(false);
+        document.getElementById("viewStatus").innerHTML = "";
+        document.getElementById("viewError").innerHTML = msg;
+        }
+
+        function setViewStatus(msg) {
+        setViewLoadingIconVisibility(true);
+        document.getElementById("viewError").innerHTML = "";
+        document.getElementById("viewStatus").innerHTML = msg;
+        }
+
+        function setViewLoadingIconVisibility(visible) {
+        document.getElementById('view-loading-icon').style.display = visible ? 'block' : 'none';
+        }
+    
+        window.addEventListener("popstate", (event) => {
+        if (currentAlphaRemovalThreshold !== undefined) {
+            window.location = 'index.html?art=' + currentAlphaRemovalThreshold + '&cu=' + currentCameraUpArray + "&cp=" + currentCameraPositionArray + "&cla=" + currentCameraLookAtArray;
+        } else {
+            window.location = 'index.html';
+        }
+        });
+
+        function runViewer(splatBufferData, isPly, isStandardSplat, alphaRemovalThreshold, cameraUpArray, cameraPositionArray, cameraLookAtArray) {
+        const viewerOptions = {
+            'cameraUp': cameraUpArray,
+            'initialCameraPosition': cameraPositionArray,
+            'initialCameraLookAt': cameraLookAtArray,
+            'halfPrecisionCovariancesOnGPU': true,
+        };
+        const splatBufferOptions = {
+            'splatAlphaRemovalThreshold': alphaRemovalThreshold
+        };
+
+        const splatBuffer = fileBufferToSplatBuffer(splatBufferData, isPly, isStandardSplat, 0, alphaRemovalThreshold);
+        document.getElementById("demo-content").style.display = 'none';
+        document.body.style.backgroundColor = "#000000";
+        history.pushState("ViewSplat", null);
+        const viewer = new GaussianSplats3D.Viewer(viewerOptions);
+        viewer.loadSplatBuffersIntoMesh([splatBuffer], [splatBufferOptions])
+        .then(() => {
+            viewer.start();
+        });
+        }
+
+    </script>
+    <script>
+        function openDemo(demoName) {
+        window.location = demoName + '.html';
+        }
+        function reset() {
+        window.location = 'index.html';
+        }
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-PYVRSFMDRL');
+    </script>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;%E2%9C%A8&lt;/text&gt;&lt;/svg&gt;">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/codemirror.min.css">
+    <link rel="stylesheet" href="css/app.css"> 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/codemirror.min.js"></script>
+    <script src="js/clipboard.min.js"></script>
+    <script src="js/video_comparison.js"></script>
+    <script src="js/app.js"></script> 
+    <link rel="shortcut icon" href="./images/icon.jpg" type="image/png"/>
+
+    <style>
+        .centered {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+    
+        .centered h3 {
+            margin-bottom: 10px;
+        }
+    
+        .video-compare-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .linked-author {
+            color: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            text-decoration: none;
+        }
+
+        .video-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }  
+
+        .video-container {
+            flex: 1 1 calc(33.333% - 40px); /* Adjust the 33.333% to fit 3 video containers in a row */
+        }
+        .video-title {
+            text-align: center;
+            color: #4a4a4a;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<section class="hero">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column has-text-centered">
+                    <h1 class="title is-1 publication-title">UW-3DGS: Unveiling Underwater Scenes and Scattering Media through 3D Gaussian Splatting</h1>
+                    <div class="is-size-3 publication-authors">
+                        <span class="author-block">
+                          Anonymous Author<sup>1</sup>,
+                        </span>
+                       
+          
+                        <span class="author-block">
+                          <div class="is-size-3 author-block">
+                          <a class="linked-author" href="">Anonymous Author</a><sup>2</sup>,
+                          </span>
+                      <span class="author-block">
+                          <a class="linked-author" href="">Anonymous Author</a><sup>1</sup>,
+                        </span>
+            </div>
+                    </div>
+                    <div class="is-size-5 publication-authors">
+                        <span class="institution-block">
+                          <span class="instit"><sup>1</sup>Anonymous Department,
+                            <br>Anonymous Institution  
+                          </span>
+                          <span class="instit"><sup>2</sup>Anonymous Department,
+                            <br>Anonymous Institution 
+                          </span>
+                        </span>
+                    </div>
+                    <h1 style="font-size:24px;font-weight:bold">Anonymous Venue</h1>
+                    <div class="column has-text-centered">
+                        <div class="publication-links" style="display: flex; align-items: center; justify-content: center;">
+                            <!-- PDF Link -->
+                            <span class="link-block">
+                                <a href="https:"
+                                    class="external-link button is-normal is-rounded is-dark">
+                                  <span class="icon">
+                                      <i class="ai ai-arxiv is-size-4"></i>
+                                  </span>
+                                  <span>Paper</span>
+                                </a>
+                            </span>
+                            <!-- Video Link -->
+                            <span class="link-block">
+                                <a href="https://www.youtube.com"
+                                    class="external-link button is-normal is-rounded is-dark">
+                                  <span class="icon">
+                                      <i class="fab fa-youtube"></i>
+                                  </span>
+                                  <span>Video</span>
+                                </a>
+                            </span>
+                           
+                            <!-- Code Link -->
+                            <span class="link-block">
+                                <a href="https://github.com/"
+                                   class="external-link button is-normal is-rounded is-dark">
+                                  <span class="icon">
+                                      <i class="fab fa-github is-size-4"></i>
+                                  </span>
+                                  <span>Code</span>
+                                </a>
+                            </span>
+
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="centered">
+        <h3>
+        Novel Views by Direct Rendering of Gaussians, Left:3DGS, right: Ours (No water)
+        </h3>
+    </div>
+    <div class="video-row">
+        <div class="video-container">
+            <h4 class="video-title">Curasao</h4>
+            <video class="video" id="JG" loop playsinline autoplay muted src="videos/Curasao/3DGS_UW_w_pruning_NW.mp4"  onplay="resizeAndPlay(this)"></video>
+            <canvas height=0 class="videoMerge" id="JGMerge"></canvas>
+        </div>
+        <div class="video-container">
+            <h4 class="video-title">RedSea</h4>
+            <video class="video" id="IUI" loop playsinline autoplay muted src="videos/RedSea/3DGS_UW_w_pruning_NW.mp4"  onplay="resizeAndPlay(this)"></video>
+            <canvas height=0 class="videoMerge" id="IUIMerge"></canvas>
+        </div>
+        <!-- Add the new video container here -->
+        <div class="video-container">
+            <h4 class="video-title">Panama</h4>
+            <video class="video" id="Panama" loop playsinline autoplay muted src="videos/Panama/3DGS_UW_w_pruning_NW.mp4"   onplay="resizeAndPlay(this)"></video>
+            <canvas height=0 class="videoMerge" id="PanamaMerge"></canvas>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h3>
+                Abstract
+            </h3>
+            <p class="text-justify">
+            Neural Radiance Fields (NeRF) have set new benchmarks in reconstructing scenes from multi-view images. 
+            However, their application to scenes with scattering media like underwater environments or fog has been less explored. 
+            Image formation with scattering media is difficult since it requires multiple physical attributes, such as wavelength and etc. 
+            Therefore, 3D reconstruction from images affected by scattering media is ill-posed.
+            But scattering media's continuous nature aligns well with NeRF's volume rendering, 
+            output per-point physical attributes but at a cost to computational efficiency. 
+            In order to improve the efficiency of existing NeRF-based methods modeling scattering media, 
+            we integrate the latest in NeRF technology, 3D Gaussian Splatting (3DGS), 
+            with the image formation model in scattering media to efficiently approximate attenuation and scattering coefficients, 
+            and reconstruct clear 3D scenes.
+            Our method is validated on real underwater scenes, 
+            demonstrating its ability to render novel views of underwater scenes and produce clear images as though in the absence of water. 
+            It outperforms existing methods in efficiency, quality, and simplicity, offering a more effective solution to underwater scene reconstruction. 
+        </p>
+        </div>
+    </div>
+
+
+    <div class="col-md-8 col-md-offset-2">
+        <h3>
+            Underwater Image Formation Model
+        </h3>
+        <img src="figures/UW_img_equation.png"  alt="overview2" width="20" height="20">
+    </div> 
+
+
+    <div class="col-md-8 col-md-offset-2">
+        <h3>
+            UW-3DGS: Medium Aware Rendering
+        </h3>
+        <img src="figures/minor_pipeline.png" class="img-responsive" alt="overview" width="20%" height="20%" style="margin:auto;">
+    </div>
+
+    <div class="col-md-8 col-md-offset-2">
+        <h3>
+            Overall Pipeline of UW-3DGS
+        </h3>
+        <img src="figures/overall_pipeline.png" class="img-responsive" alt="overview"  width="5%" height="5%" style="margin:auto;">
+    </div>
+</div>
+
+
+   
+
+        <div class="title">
+                <h3>
+            
+        </h3>
+        </div>
+
+    <div class="header-content-container  "> 
+
+        <div class="title">
+          <div style="margin: auto; font-size: 14pt;">
+            Online Demo scenes
+          </div>
+        </div>
+
+        <div class="content-row">
+          <div class="demo-scene-panel" onclick="openDemo('Curasao_3DGS')">
+            <span class="small-title">Curasao_3DGS</span>
+          </div>
+        <div class="demo-scene-panel" onclick="openDemo('Panama_3DGS')">
+            <span class="small-title">Panama_3DGS</span>
+          </div>
+        <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_3DGS')">
+            <span class="small-title">JapaneseGradens-RedSea_3DGS</span>
+          </div>
+          </div>
+          <div class="content-row">
+            <div class="demo-scene-panel" onclick="openDemo('Curasao_w_self_pruning_from_0_total_40000')">
+              <span class="small-title">Curasao w self-pruning</span>
+            </div>
+            <div class="demo-scene-panel" onclick="openDemo('Panama_w_self_pruning_from_0_total_40000')">
+              <span class="small-title">Panama w self-pruning</span>
+            </div>
+            <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_w_self_pruning_from_0_total_40000')">
+              <span class="small-title">RedSea w self-pruning</span>
+            </div>
+        </div>
+        <div class="content-row">
+            <div class="demo-scene-panel" onclick="openDemo('Curasao_w_self_pruning_from_30000_total_40000')">
+              <span class="small-title">Curasao w Delayed self-pruning</span>
+            </div>
+            <div class="demo-scene-panel" onclick="openDemo('Panama_w_self_pruning_from_30000_total_40000')">
+              <span class="small-title">Panama w Delayed self-pruning</span>
+            </div>
+            <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_w_self_pruning_from_30000_total_40000')">
+              <span class="small-title">RedSea w Delayed self-pruning</span>
+            </div>
+        </div>
+        <div class="content-row">
+            <div class="demo-scene-panel" onclick="openDemo('Curasao_wo_self_pruning_40000')">
+              <span class="small-title">Curasao w/o self-pruning</span>
+            </div>
+            <div class="demo-scene-panel" onclick="openDemo('Panama_wo_self_pruning_40000')">
+              <span class="small-title">Panama w/o self-pruning</span>
+            </div>
+            <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_wo_self_pruning_40000')">
+              <span class="small-title">RedSea w/o self-pruning</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+
+
+
+
+
+
+
+
+<script>
+    document.onkeydown = keyHandler;
+</script>
+
+
+<section class="section" id="BibTeX">
+    <div class="container content">
+    </div>
+</section>
+
+<section class="section" id="refrences">
+    <div class="container content">
+        <div class="columns">
+            <div class="column">
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="content has-text-centered">
+                The website interface is adapted from <a href="https://noise-aware-nerf.github.io/">NAN</a>,
+                <a href="https://dorverbin.github.io/refnerf//">Ref-NeRF</a>, <a href="https://projects.markkellogg.org/threejs/demo_gaussian_splats_3d.php">3DGS with Three.js</a>, and <a href="https://sea-thru-nerf.github.io/">SeaThru-NeRF</a>.
+                <br>
+            </div>
+        </div>
+    </div>
+</footer> 
+
+</body>
+</html>

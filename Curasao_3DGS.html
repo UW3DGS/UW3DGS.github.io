@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>UW-3DGS Demo - Curasao 3DGS</title>
+  <script type="text/javascript" src="js/util.js"></script>
+  <script type="text/javascript" src="enable-threads.js"></script>
+
+  <script type="importmap">
+    {
+        "imports": {
+            "three": "./lib/three.module.js",
+            "gaussian-splats-3d": "./lib/gaussian-splats-3d.module.js"
+        }
+    }
+  </script>
+  <style>
+
+    body {
+      background-color: #000000;
+      height: 100vh;
+      margin: 0px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+  <script type="module">
+    import * as GaussianSplats3D from 'gaussian-splats-3d';
+    import * as THREE from 'three';
+
+
+
+    const viewer = new GaussianSplats3D.Viewer({
+      'cameraUp': [-0.01620, -0.97270, -0.23150],
+      'initialCameraPosition': [-7.12185, 0.78639, -6.27684],
+      'initialCameraLookAt': [-5.60921, 0.44301, 2.09881],
+      'halfPrecisionCovariancesOnGPU': true
+    });
+    
+    let path = 'https://huggingface.co/datasets/UW3DGS/UW3DGS/resolve/main/Curasao_3DGS_point_cloud.ply'
+    viewer.loadFile(path)
+    .then(() => {
+        viewer.start();
+    }); 
+  </script>
+</body>
+
+</html>
