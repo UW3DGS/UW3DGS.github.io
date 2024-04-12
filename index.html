@@ -718,19 +718,16 @@
                 Abstract
             </h3>
             <p class="text-justify">
-            Neural Radiance Fields (NeRF) have set new benchmarks in reconstructing scenes from multi-view images. 
-            However, their application to scenes with scattering media like underwater environments or fog has been less explored. 
-            Image formation with scattering media is difficult since it requires multiple physical attributes, such as wavelength and etc. 
-            Therefore, 3D reconstruction from images affected by scattering media is ill-posed.
-            But scattering media's continuous nature aligns well with NeRF's volume rendering, 
-            output per-point physical attributes but at a cost to computational efficiency. 
-            In order to improve the efficiency of existing NeRF-based methods modeling scattering media, 
-            we integrate the latest in NeRF technology, 3D Gaussian Splatting (3DGS), 
-            with the image formation model in scattering media to efficiently approximate attenuation and scattering coefficients, 
-            and reconstruct clear 3D scenes.
-            Our method is validated on real underwater scenes, 
-            demonstrating its ability to render novel views of underwater scenes and produce clear images as though in the absence of water. 
-            It outperforms existing methods in efficiency, quality, and simplicity, offering a more effective solution to underwater scene reconstruction. 
+Neural Radiance Fields (NeRF) have set new benchmarks in reconstructing scenes from multi-view images. 
+However, its application to scenes with scattering media like water or fog has been underexplored. 
+Image formation with scattering media is difficult since it requires physical attributes, such as wavelength to be inversely inferred, 
+                which makes 3D reconstruction from images affected by scattering media an ill-posed problem.
+Though scattering media's continuous nature aligns well with NeRF's volume rendering nature, 
+                enables outputting per-point physical attributes but at a cost on computational efficiency. 
+In order to improve the efficiency of existing NeRF-based methods modeling scattering media, we integrate the latest in NeRF technology, 
+                3D Gaussian Splatting (3DGS), with the image formation model in scattering media to efficiently approximate the physical attributes, and reconstruct clear 3D scenes. 
+Our method is validated on real underwater scenes, demonstrating its ability to render novel views of underwater scenes and produce clear images as though in the absence of water. 
+It outperforms existing methods in efficiency, quality, and simplicity, offering a more effective solution to underwater scene reconstruction.
         </p>
         </div>
     </div>
