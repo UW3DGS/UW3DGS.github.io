@@ -8,7 +8,7 @@
     <title>UW-3DGS: Unveiling Underwater Scenes and Scattering Media through 3D Gaussian Splatting</title>
     <script type="text/javascript" src="js/util.js"></script>
     <script type="text/javascript" src="enable-threads.js"></script>
-    
+
 
 
 
@@ -244,7 +244,14 @@
         let currentCameraPositionArray;
         let currentCameraLookAtArray;
     </script>
-
+    <style>
+    .fixed-text {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        font-size: 20px;
+    }
+    </style>
 
 
     <script type="module">
@@ -512,20 +519,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -621,7 +614,7 @@
                     <h1 class="title is-1 publication-title">UW-3DGS: Unveiling Underwater Scenes and Scattering Media through 3D Gaussian Splatting</h1>
                     <div class="is-size-3 publication-authors">
                         <span class="author-block">
-                          Anonymous Author<sup>1</sup>,
+                        <a class="linked-author" href="">Anonymous Author</a><sup>1</sup>,
                         </span>
                        
           
@@ -630,7 +623,7 @@
                           <a class="linked-author" href="">Anonymous Author</a><sup>2</sup>,
                           </span>
                       <span class="author-block">
-                          <a class="linked-author" href="">Anonymous Author</a><sup>1</sup>,
+                          <a class="linked-author" href="">Anonymous Author</a><sup>2</sup>,
                         </span>
             </div>
                     </div>
@@ -678,7 +671,6 @@
                                   <span>Code</span>
                                 </a>
                             </span>
-
                         </div>
                     </div>
             </div>
@@ -687,11 +679,7 @@
 </section>
 
 <div class="container">
-    <div class="centered">
-        <h3>
-        Novel Views by Direct Rendering of 3D Gaussians, Left:3DGS, right: Ours (No water interference)
-        </h3>
-    </div>
+
     <div class="video-row">
         <div class="video-container">
             <h4 class="video-title">Curasao</h4>
@@ -699,8 +687,8 @@
             <canvas height=0 class="videoMerge" id="JGMerge"></canvas>
         </div>
         <div class="video-container">
-            <h4 class="video-title">RedSea</h4>
-            <video class="video" id="IUI" loop playsinline autoplay muted src="videos/RedSea/3DGS_UW_w_pruning_NW.mp4"  onplay="resizeAndPlay(this)"></video>
+            <h4 class="video-title">RedSea (L: Underwater R: No water)</h4>
+            <video class="video" id="IUI" loop playsinline autoplay muted playbackRate="0.1" src="videos/RedSea/3DGS_UW_w_pruning_NW.mp4"  onplay="resizeAndPlay(this)"></video>
             <canvas height=0 class="videoMerge" id="IUIMerge"></canvas>
         </div>
         <!-- Add the new video container here -->
@@ -725,12 +713,7 @@ Experiments on real underwater scenes demonstrate its ability to render State-of
     </div>
 
 
-    <div class="col-md-8 col-md-offset-2">
-        <h3>
-            Underwater Image Formation Model
-        </h3>
-        <img src="figures/UW_img_equation.png"  alt="overview2" width="20" height="20">
-    </div> 
+
 
 
 
@@ -742,69 +725,64 @@ Experiments on real underwater scenes demonstrate its ability to render State-of
     </div>
 </div>
 
+<br>
+<br>
+<br>
 
-   
-
-        <div class="title">
-                <h3>
-            
-        </h3>
-        </div>
-
-    <div class="header-content-container  "> 
+    <div class="header-content-container  " style="margin: 0 auto;width:750px; "> 
 
         <div class="title">
-          <div style="margin: auto; font-size: 14pt;">
-            Online Demo scenes
+          <div style="margin: 0 auto; font-size: 12pt;">
+            Online Demo Scenes (Click below buttons to render in real-time)
           </div>
         </div>
 
         <div class="content-row" style="width:800px; margin:0 auto;">
           <div class="demo-scene-panel" onclick="openDemo('Curasao_3DGS')">
-            <span class="small-title">Curasao reconstructed by 3DGS</span>
+            <span class="small-title" style="font-size: 11pt;">Curasao reconstructed by 3DGS</span>
           </div>
         <div class="demo-scene-panel" onclick="openDemo('Panama_3DGS')">
-            <span class="small-title">Panamas reconstructed by 3DGS</span>
+            <span class="small-title" style="font-size: 11pt;">Panamas reconstructed by 3DGS</span>
           </div>
         <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_3DGS')">
-            <span class="small-title">JapaneseGradens-RedSea reconstructed by 3DGS</span>
+            <span class="small-title" style="font-size: 11pt;">JapaneseGradens-RedSea reconstructed by 3DGS</span>
           </div>
           </div>
           <div class="content-row" style="width:800px; margin:0 auto;">
             <div class="demo-scene-panel" onclick="openDemo('Curasao_w_self_pruning_from_0_total_40000')">
-              <span class="small-title">Curasao reconstructed by Ours (For 3D reconstruction and no water image rendering)</span>
+              <span class="small-title" style="font-size: 11pt;">Curasao reconstructed by Ours (For 3D reconstruction and no water image rendering)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('Panama_w_self_pruning_from_0_total_40000')">
-              <span class="small-title">Panama reconstructed by Ours (For 3D reconstruction and no water image rendering)</span>
+              <span class="small-title" style="font-size: 11pt;">Panama reconstructed by Ours (For 3D reconstruction and no water image rendering)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_w_self_pruning_from_0_total_40000')">
-              <span class="small-title">JapaneseGradens-RedSea reconstructed by Ours (For 3D reconstruction and no water image rendering)</span>
+              <span class="small-title" style="font-size: 11pt;">JapaneseGradens-RedSea reconstructed by Ours (For 3D reconstruction and no water image rendering)</span>
             </div>
         </div>
         <div class="content-row" style="width:800px; margin:0 auto;">
             <div class="demo-scene-panel" onclick="openDemo('Curasao_w_self_pruning_from_30000_total_40000')">
-              <span class="small-title">Curasao reconstructed by Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
+              <span class="small-title" style="font-size: 11pt;">Curasao reconstructed by Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('Panama_w_self_pruning_from_30000_total_40000')">
-              <span class="small-title">Panama reconstructed by Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
+              <span class="small-title" style="font-size: 11pt;">Panama reconstructed by Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_w_self_pruning_from_30000_total_40000')">
-              <span class="small-title">JapaneseGradens-RedSea reconstructed by Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
+              <span class="small-title" style="font-size: 11pt;">JapaneseGradens-RedSea reconstructed by Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
             </div>
         </div>
         <div class="content-row" style="width:800px; margin:0 auto;">
             <div class="demo-scene-panel" onclick="openDemo('Curasao_wo_self_pruning_40000')">
-              <span class="small-title">Curasao reconstructed by Ours (For underwater image rendering)</span>
+              <span class="small-title" style="font-size: 11pt;">Curasao reconstructed by Ours (For underwater image rendering)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('Panama_wo_self_pruning_40000')">
-              <span class="small-title">Panama reconstructed by Ours (For underwater image rendering)</span>
+              <span class="small-title" style="font-size: 11pt;">Panama reconstructed by Ours (For underwater image rendering)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_wo_self_pruning_40000')">
-              <span class="small-title">JapaneseGradens-RedSea reconstructed by Ours (For underwater image rendering)</span>
+              <span class="small-title" style="font-size: 11pt;">JapaneseGradens-RedSea reconstructed by Ours (For underwater image rendering)</span>
             </div>
         </div>
     </div>
-    <br>
+
 
 
 
