@@ -689,7 +689,7 @@
 <div class="container">
     <div class="centered">
         <h3>
-        Novel Views by Direct Rendering of Gaussians, Left:3DGS, right: Ours (No water)
+        Novel Views by Direct Rendering of 3D Gaussians, Left:3DGS, right: Ours (No water interference)
         </h3>
     </div>
     <div class="video-row">
@@ -718,16 +718,8 @@
                 Abstract
             </h3>
             <p class="text-justify">
-Neural Radiance Fields (NeRF) have set new benchmarks in reconstructing scenes from multi-view images. 
-However, its application to scenes with scattering media like water or fog has been underexplored. 
-Image formation with scattering media is difficult since it requires physical attributes, such as wavelength to be inversely inferred, 
-                which makes 3D reconstruction from images affected by scattering media an ill-posed problem.
-Though scattering media's continuous nature aligns well with NeRF's volume rendering nature, 
-                enables outputting per-point physical attributes but at a cost on computational efficiency. 
-In order to improve the efficiency of existing NeRF-based methods modeling scattering media, we integrate the latest in NeRF technology, 
-                3D Gaussian Splatting (3DGS), with the image formation model in scattering media to efficiently approximate the physical attributes, and reconstruct clear 3D scenes. 
-Our method is validated on real underwater scenes, demonstrating its ability to render novel views of underwater scenes and produce clear images as though in the absence of water. 
-It outperforms existing methods in efficiency, quality, and simplicity, offering a more effective solution to underwater scene reconstruction.
+3D Gaussian Splatting (3DGS) have set new benchmarks in reconstructing scenes from multi-view images. However, its application to scenes with scattering media like water or fog has been underexplored. Reconstructing images or scenes affected by scattering media is an ill-posed problem, as rendering the image requires knowing multiple physical attributes. In this paper, we propose a novel pipeline, UW-3DGS, to efficiently approximate the physical attributes of scattering media by learning an underwater image formation model and reconstructing underwater 3D scenes without water interference using a proposed Self-Pruning Supervision Branch with 3DGS. 
+Experiments on real underwater scenes demonstrate its ability to render State-of-The-Art high-quality novel views of underwater scenes (with water optionally present), including essential details like seabed topography and vegetation, which are crucial for marine engineering. Quantitatively, our method is approximately 100 times more efficient in training and achieves a PSNR of 0.836 higher than SeaThru-NeRF, providing a more effective pipeline for underwater scene reconstruction and potential robotics applications.
         </p>
         </div>
     </div>
@@ -741,12 +733,6 @@ It outperforms existing methods in efficiency, quality, and simplicity, offering
     </div> 
 
 
-    <div class="col-md-8 col-md-offset-2">
-        <h3>
-            UW-3DGS: Medium Aware Rendering
-        </h3>
-        <img src="figures/minor_pipeline.png" class="img-responsive" alt="overview" width="20%" height="20%" style="margin:auto;">
-    </div>
 
     <div class="col-md-8 col-md-offset-2">
         <h3>
@@ -775,46 +761,46 @@ It outperforms existing methods in efficiency, quality, and simplicity, offering
 
         <div class="content-row">
           <div class="demo-scene-panel" onclick="openDemo('Curasao_3DGS')">
-            <span class="small-title">Curasao_3DGS</span>
+            <span class="small-title">3D reconstruction results from 3DGS</span>
           </div>
         <div class="demo-scene-panel" onclick="openDemo('Panama_3DGS')">
-            <span class="small-title">Panama_3DGS</span>
+            <span class="small-title">3D reconstruction results from 3DGS</span>
           </div>
         <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_3DGS')">
-            <span class="small-title">JapaneseGradens-RedSea_3DGS</span>
+            <span class="small-title">3D reconstruction results from 3DGS</span>
           </div>
           </div>
           <div class="content-row">
             <div class="demo-scene-panel" onclick="openDemo('Curasao_w_self_pruning_from_0_total_40000')">
-              <span class="small-title">Curasao w self-pruning</span>
+              <span class="small-title">Ours w/ Self-Pruning Supervision Loss (For 3D reconstruction and no water image rendering)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('Panama_w_self_pruning_from_0_total_40000')">
-              <span class="small-title">Panama w self-pruning</span>
+              <span class="small-title">Ours w/ Self-Pruning Supervision Loss (For 3D reconstruction and no water image rendering)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_w_self_pruning_from_0_total_40000')">
-              <span class="small-title">RedSea w self-pruning</span>
+              <span class="small-title">Ours w/ Self-Pruning Supervision Loss (For 3D reconstruction and no water image rendering)</span>
             </div>
         </div>
         <div class="content-row">
             <div class="demo-scene-panel" onclick="openDemo('Curasao_w_self_pruning_from_30000_total_40000')">
-              <span class="small-title">Curasao w Delayed self-pruning</span>
+              <span class="small-title">Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('Panama_w_self_pruning_from_30000_total_40000')">
-              <span class="small-title">Panama w Delayed self-pruning</span>
+              <span class="small-title">Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_w_self_pruning_from_30000_total_40000')">
-              <span class="small-title">RedSea w Delayed self-pruning</span>
+              <span class="small-title">Ours w/ postp. Self-Pruning Supervision Loss (For ablation study)</span>
             </div>
         </div>
         <div class="content-row">
             <div class="demo-scene-panel" onclick="openDemo('Curasao_wo_self_pruning_40000')">
-              <span class="small-title">Curasao w/o self-pruning</span>
+              <span class="small-title">Ours w/o Self-Pruning Supervision Loss (For underwater image rendering)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('Panama_wo_self_pruning_40000')">
-              <span class="small-title">Panama w/o self-pruning</span>
+              <span class="small-title">Ours w/o Self-Pruning Supervision Loss (For underwater image rendering)</span>
             </div>
             <div class="demo-scene-panel" onclick="openDemo('JapaneseGradens-RedSea_wo_self_pruning_40000')">
-              <span class="small-title">RedSea w/o self-pruning</span>
+              <span class="small-title">Ours w/o Self-Pruning Supervision Loss (For underwater image rendering)</span>
             </div>
         </div>
     </div>
